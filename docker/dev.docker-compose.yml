@@ -1,0 +1,104 @@
+version: '3.7'
+services:
+
+  redis:
+    image: redis:latest
+    container_name: uralelectro-redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+
+  uralelectro-bot:
+    build:
+      context: ../
+      dockerfile: docker/bot.Dockerfile
+    container_name: uralelectro-bot
+    restart: unless-stopped
+    env_file: ../.docker.env
+    # command: poetry run python3 ./bot/main.py
+    command: sleep infinity
+    volumes:
+      - ../src/bot:/opt/bot
+
+  uralelectro-bot-postgresql:
+    image: postgres:14.4
+    container_name: uralelectro-bot-postgresql
+    environment:
+      POSTGRES_DB: ${PG_MASTER_DB:-project_uralelectro-bot}
+      POSTGRES_USER: ${PG_MASTER_USER:-project_uralelectro-bot}
+      POSTGRES_PASSWORD: ${PG_MASTER_PASSWORD:-project_uralelectro-bot}
+    ports:
+      - "${DOCKER_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - db_pg_uralelectro-bot:/var/lib/postgresql/data
+
+  uralelectro-bot-pgbouncer:
+    image: bitnami/pgbouncer:1.17.0
+    container_name: uralelectro-bot-pgbouncer
+    restart: unless-stopped
+    environment:
+      POSTGRESQL_HOST: uralelectro-bot-postgresql
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: ${PG_MASTER_USER:-project_uralelectro-bot}
+      POSTGRESQL_PASSWORD: ${PG_MASTER_PASSWORD:-project_uralelectro-bot}
+      POSTGRESQL_DATABASE: ${PG_MASTER_DB:-project_uralelectro-bot}
+      PGBOUNCER_PORT: 6432
+      PGBOUNCER_DATABASE: ${PG_MASTER_DB:-project_uralelectro-bot}
+      PGBOUNCER_POOL_MODE: transaction
+    ports:
+      - "${DOCKER_PGBOUNCER_PORT:-6432}:6432"
+    depends_on:
+      - uralelectro-bot-postgresql
+
+  uralelectro-bot-migrate-db:
+    build:
+      context: ../
+      dockerfile: docker/back.Dockerfile
+    container_name: uralelectro-bot-migrate-db
+    env_file: ../.docker.env
+    environment:
+      PG_ALEMBIC_DB: ${PG_MASTER_DB:-project_uralelectro-bot}
+      PG_ALEMBIC_USER: ${PG_MASTER_USER:-project_uralelectro-bot}
+      PG_ALEMBIC_PASSWORD: ${PG_MASTER_PASSWORD:-project_uralelectro-bot}
+      PG_ALEMBIC_HOST: uralelectro-bot-pgbouncer
+      PG_ALEMBIC_PORT: ${PG_MASTER_PORT:-6432}
+    command: poetry run alembic upgrade head
+    volumes:
+      - ../src/app:/opt/app
+      - ../src/migrations:/opt/migrations
+      - ../sql:/opt/sql
+    depends_on:
+      - uralelectro-bot-pgbouncer
+
+  uralelectro-bot-backend:
+    build:
+      context: ../
+      dockerfile: docker/back.Dockerfile
+    container_name: uralelectro-bot-backend
+    restart: unless-stopped
+    env_file: ../.docker.env
+    environment:
+      PG_MASTER_DB: ${PG_MASTER_DB:-project_uralelectro-bot}
+      PG_MASTER_USER: ${PG_MASTER_USER:-project_uralelectro-bot}
+      PG_MASTER_PASSWORD: ${PG_MASTER_PASSWORD:-project_uralelectro-bot}
+      PG_MASTER_HOST: uralelectro-bot-pgbouncer
+      PG_MASTER_PORT: ${PG_MASTER_PORT:-6432}
+      PG_SLAVE_DB: ${PG_SLAVE_DB:-project_uralelectro-bot}
+      PG_SLAVE_USER: ${PG_SLAVE_USER:-project_uralelectro-bot}
+      PG_SLAVE_PASSWORD: ${PG_SLAVE_PASSWORD:-project_uralelectro-bot}
+      PG_SLAVE_HOST: uralelectro-bot-pgbouncer
+      PG_SLAVE_PORT: ${PG_SLAVE_PORT:-6432}
+    ports:
+      - ${DOCKER_BACK_PORT:-8080}:8080
+    command: poetry run python3 ./app/main.py
+    volumes:
+      - ../src/app:/opt/app
+    healthcheck:
+      test: curl --fail http://127.0.0.1:8080/healthcheck || exit 1
+      interval: 60s
+      retries: 3
+      start_period: 20s
+      timeout: 10s
+
+volumes:
+  db_pg_uralelectro-bot:
