@@ -11,7 +11,7 @@ from app.models.employee.employees import Employee
 class EmployeeAdminView(ModelView, model=Employee):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Сотрудник"
@@ -26,7 +26,7 @@ class EmployeeAdminView(ModelView, model=Employee):
     }
 
     column_list = [
-        Employee.id,
+        # Employee.id,
         Employee.first_name,
         Employee.last_name,
         Employee.position,

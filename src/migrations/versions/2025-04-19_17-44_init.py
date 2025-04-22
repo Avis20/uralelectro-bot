@@ -17,6 +17,7 @@ depends_on = None
 
 
 def upgrade():
+    op.execute("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"");
     op.execute("CREATE SCHEMA \"user\"")
     op.execute("CREATE SCHEMA \"inventory\"")
     op.execute("CREATE SCHEMA \"supplier\"")

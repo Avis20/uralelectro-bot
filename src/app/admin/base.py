@@ -4,7 +4,7 @@ from sqladmin import Admin
 from app.admin.auth import AdminAuth
 from app.admin.views.suppliers import SupplierAdminView
 from app.admin.views.arrivals import ArrivalAdminView
-from app.admin.views.nomenclature import NomenclatureAdminView
+from app.admin.views.products import ProductAdminView
 from app.admin.views.categories import CategoryAdminView
 from app.admin.views.employees import EmployeeAdminView
 from app.admin.views.customers import CustomerAdminView
@@ -29,7 +29,7 @@ def setup_admin(app: FastAPI, settings: Settings):
     admin.add_view(WarehouseAdminView)
     admin.add_view(SupplierAdminView)
     admin.add_view(ArrivalAdminView)
-    admin.add_view(NomenclatureAdminView)
+    admin.add_view(ProductAdminView)
     admin.add_view(EmployeeAdminView)
     admin.add_view(CustomerAdminView)
     admin.add_view(OrderAdminView)

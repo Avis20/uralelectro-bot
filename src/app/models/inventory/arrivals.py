@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, relationship
 
 from app.models.base import Column, BaseModel, RestrictForeignKey
 from app.models.inventory.warehouses import Warehouse
-# from app.models.inventory.nomenclature import Nomenclature
+# from app.models.inventory.product import Product
 from app.models.mixins import BaseUUIDMixin
 from app.models.supplier.suppliers import Supplier
 
@@ -57,10 +57,10 @@ class Arrival(BaseModel, BaseUUIDMixin):
         foreign_keys=[warehouse_id],
     )
 
-    nomenclatures: Mapped[list["Nomenclature"]] = relationship(
-        "Nomenclature",
+    products: Mapped[list["Product"]] = relationship(
+        "Product",
         back_populates="arrival",
         init=False,
         lazy="immediate",
-        foreign_keys="[Nomenclature.arrival_id]",
+        foreign_keys="[Product.arrival_id]",
     )

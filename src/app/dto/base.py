@@ -26,7 +26,11 @@ class DTO:
     @classmethod
     def model_to_dto(cls, from_model_dt_class: DataClass, **kwargs):
         from_dt_dict = asdict(from_model_dt_class)
-        return cls.from_dict(from_dt_dict, **kwargs)
+        print('\n\n')
+        print(from_dt_dict)
+        print('\n\n')
+        # return cls.from_dict(from_dt_dict, **kwargs)
+        return None
 
 
 @dataclass

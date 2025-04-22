@@ -10,7 +10,7 @@ from app.models.supplier.suppliers import Supplier
 class SupplierAdminView(ModelView, model=Supplier):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Поставщики"
@@ -29,7 +29,7 @@ class SupplierAdminView(ModelView, model=Supplier):
     }
 
     column_list = [
-        Supplier.id,
+        # Supplier.id,
         Supplier.company_name,
         Supplier.contact_person,
         Supplier.address,

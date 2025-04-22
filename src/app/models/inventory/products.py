@@ -11,9 +11,9 @@ from app.models.inventory.categories import Category
 from app.models.inventory.warehouses import Warehouse
 
 
-class Nomenclature(BaseModel, BaseUUIDMixin):
+class Product(BaseModel, BaseUUIDMixin):
 
-    __tablename__ = "nomenclature"
+    __tablename__ = "Product"
     __table_args__ = {"schema": "inventory"}
 
     def __str__(self) -> str:
@@ -47,6 +47,13 @@ class Nomenclature(BaseModel, BaseUUIDMixin):
         comment="Наименование товара",
     )
 
+    image_url: Mapped[str] = Column(
+        String,
+        nullable=True,
+        init=False,
+        comment="Ссылка на изображение товара",
+    )
+
     unit_of_measure: Mapped[str] = Column(
         String,
         nullable=False,
@@ -70,7 +77,7 @@ class Nomenclature(BaseModel, BaseUUIDMixin):
 
     category: Mapped["Category"] = relationship(
         "Category",
-        back_populates="nomenclatures",
+        back_populates="products",
         lazy="immediate",
         init=False,
         foreign_keys=[category_id],
@@ -78,7 +85,7 @@ class Nomenclature(BaseModel, BaseUUIDMixin):
 
     warehouse: Mapped["Warehouse"] = relationship(
         "Warehouse",
-        back_populates="nomenclatures",
+        back_populates="products",
         lazy="immediate",
         init=False,
         foreign_keys=[warehouse_id],
@@ -86,7 +93,7 @@ class Nomenclature(BaseModel, BaseUUIDMixin):
 
     arrival: Mapped["Arrival"] = relationship(
         "Arrival",
-        back_populates="nomenclatures",
+        back_populates="products",
         lazy="immediate",
         init=False,
         foreign_keys=[arrival_id],
@@ -94,9 +101,9 @@ class Nomenclature(BaseModel, BaseUUIDMixin):
 
     orders: Mapped[list["Order"]] = relationship(
         "Order",
-        back_populates="nomenclature",
+        back_populates="product",
         lazy="immediate",
         init=False,
-        foreign_keys="[Order.nomenclature_id]",
+        foreign_keys="[Order.product_id]",
         cascade="all, delete-orphan",
     )

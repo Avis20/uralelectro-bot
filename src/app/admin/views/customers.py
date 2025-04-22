@@ -10,7 +10,7 @@ from app.models.customer.customers import Customer
 class CustomerAdminView(ModelView, model=Customer):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Заказчик"
@@ -29,7 +29,7 @@ class CustomerAdminView(ModelView, model=Customer):
     }
 
     column_list = [
-        Customer.id,
+        # Customer.id,
         Customer.contact_person,
         Customer.address,
         Customer.city,

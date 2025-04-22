@@ -10,7 +10,7 @@ from app.models.order.orders import Order
 class OrderAdminView(ModelView, model=Order):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Заказ"
@@ -18,7 +18,7 @@ class OrderAdminView(ModelView, model=Order):
 
     column_labels = {
         Order.customer: "Заказчик",
-        Order.nomenclature: "Номенклатура",
+        Order.product: "Номенклатура",
         Order.employee: "Сотрудник",
         Order.order_status: "Статус заказа",
         Order.order_date: "Дата заказа",
@@ -27,10 +27,10 @@ class OrderAdminView(ModelView, model=Order):
 
     column_list = [
         Order.id,
-        Order.customer,
-        Order.nomenclature,
-        Order.employee,
         Order.order_status,
+        Order.customer,
+        Order.product,
+        Order.employee,
         Order.order_date,
         Order.actual_delivery_date,
     ]
@@ -38,7 +38,7 @@ class OrderAdminView(ModelView, model=Order):
     column_details_list = [
         Order.id,
         Order.customer,
-        Order.nomenclature,
+        Order.product,
         Order.employee,
         Order.order_status,
         Order.order_date,

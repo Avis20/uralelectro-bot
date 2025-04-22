@@ -27,10 +27,10 @@ class Category(BaseModel, BaseUUIDMixin):
         comment="Описание категории",
     )
 
-    nomenclatures: Mapped[list["Nomenclature"]] = relationship(
-        "Nomenclature",
+    products: Mapped[list["Product"]] = relationship(
+        "Product",
         back_populates="category",
         lazy="immediate",
         init=False,
-        foreign_keys="[Nomenclature.category_id]"
+        foreign_keys="[Product.category_id]"
     )

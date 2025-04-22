@@ -10,7 +10,7 @@ from app.models.inventory.warehouses import Warehouse
 class WarehouseAdminView(ModelView, model=Warehouse):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Склады"
@@ -18,15 +18,15 @@ class WarehouseAdminView(ModelView, model=Warehouse):
 
     column_labels = {
         Warehouse.arrivals: "Поступления",
-        Warehouse.nomenclatures: "Товары",
+        Warehouse.products: "Товары",
         Warehouse.name: "Название склада",
         Warehouse.address: "Адрес склада",
     }
 
     column_list = [
+        # Warehouse.id,
         Warehouse.name,
         Warehouse.address,
-        Warehouse.id,
         Warehouse.ts_create,
         Warehouse.ts_modify,
     ]

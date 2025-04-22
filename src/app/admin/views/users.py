@@ -10,7 +10,7 @@ from app.models.user.items import UserItem
 class UserAdminView(ModelView, model=UserItem):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     column_list = [

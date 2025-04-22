@@ -37,10 +37,10 @@ class Warehouse(BaseModel, BaseUUIDMixin):
         foreign_keys="[Arrival.warehouse_id]",
     )
 
-    nomenclatures: Mapped[list["Nomenclature"]] = relationship(
-        "Nomenclature",
+    products: Mapped[list["Product"]] = relationship(
+        "Product",
         back_populates="warehouse",
         lazy="immediate",
         init=False,
-        foreign_keys="[Nomenclature.warehouse_id]",
+        foreign_keys="[Product.warehouse_id]",
     )

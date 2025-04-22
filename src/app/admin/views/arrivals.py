@@ -4,7 +4,6 @@ from typing import Any
 
 from fastapi import Request
 from sqladmin import ModelView
-from sqlalchemy.orm import joinedload
 
 from app.models.inventory.arrivals import Arrival
 
@@ -12,7 +11,7 @@ from app.models.inventory.arrivals import Arrival
 class ArrivalAdminView(ModelView, model=Arrival):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Поступление"
@@ -21,7 +20,7 @@ class ArrivalAdminView(ModelView, model=Arrival):
     column_labels = {
         Arrival.supplier: "Поставщик",
         Arrival.warehouse: "Склад",
-        Arrival.nomenclatures: "Товары",
+        Arrival.products: "Товары",
         Arrival.arrival_date: "Дата поступления",
     }
 

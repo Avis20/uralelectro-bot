@@ -1,4 +1,3 @@
-# app/admin/views/inventory/categories.py
 import uuid
 from typing import Any
 
@@ -11,20 +10,20 @@ from app.models.inventory.categories import Category
 class CategoryAdminView(ModelView, model=Category):
     can_create = True
     can_edit = True
-    can_delete = False
+    can_delete = True
     can_view_details = True
 
     name = "Категория товаров"
     name_plural = "Категории товаров"
 
     column_labels = {
-        Category.nomenclatures: "Товары",
+        Category.products: "Товары",
         Category.name: "Наименование категории",
         Category.description: "Описание категории",
     }
 
     column_list = [
-        Category.id,
+        # Category.id,
         Category.name,
         Category.description,
         Category.ts_create,
@@ -32,7 +31,7 @@ class CategoryAdminView(ModelView, model=Category):
     ]
 
     column_details_list = [
-        Category.nomenclatures,
+        Category.products,
         Category.id,
         Category.name,
         Category.description,
