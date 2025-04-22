@@ -11,14 +11,24 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = '74f152bfe7df'
-down_revision = '9f6d2b4d2d28'
+down_revision = None
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
     op.execute("CREATE SCHEMA \"user\"")
+    op.execute("CREATE SCHEMA \"inventory\"")
+    op.execute("CREATE SCHEMA \"supplier\"")
+    op.execute("CREATE SCHEMA \"customer\"")
+    op.execute("CREATE SCHEMA \"employee\"")
+    op.execute("CREATE SCHEMA \"order\"")
 
 
 def downgrade():
     op.execute("DROP SCHEMA \"user\"")
+    op.execute("DROP SCHEMA \"inventory\"")
+    op.execute("DROP SCHEMA \"supplier\"")
+    op.execute("DROP SCHEMA \"customer\"")
+    op.execute("DROP SCHEMA \"employee\"")
+    op.execute("DROP SCHEMA \"order\"")

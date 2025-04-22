@@ -1,14 +1,11 @@
-import logging
+from loguru import logger
+
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from app.models.base import BaseModel
 from app.settings import settings
 
-logging.basicConfig()
-logger = logging.getLogger('sqlalchemy')
-
-logger.setLevel(settings.log_config.LOG_LEVEL)
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

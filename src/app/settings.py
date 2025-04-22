@@ -83,12 +83,17 @@ class ApiConfig(BaseSettings):
     REQUEST_ID_LOG_LENGTH: int = 10
 
 
+class AdminConfig(BaseSettings):
+    ADMIN_SECRET: str = 'secret'
+
+
 class Settings(BaseSettings):
     DEBUG: bool = False
     ENABLE_LOG_REQUESTS: bool = False
 
     api_config: ApiConfig = ApiConfig()
     pg_db_config: PgDbConfig = PgDbConfig()
+    admin_config: AdminConfig = AdminConfig()
 
 
 settings = Settings()

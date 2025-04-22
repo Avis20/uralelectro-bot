@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import ORJSONResponse
 from loguru import logger
 
+from app.admin.base import setup_admin
 from app.settings import settings, ApiConfig, Settings
 from app.routers.base import setup_routers
 from app.exceptions.error_handlers import setup_error_handlers
@@ -37,6 +38,7 @@ def create_app(settings: Settings) -> FastAPI:
     setup_routers(app)
     setup_middlewares(app, request_id_len=settings.api_config.REQUEST_ID_LOG_LENGTH)
     setup_error_handlers(app)
+    setup_admin(app=app, settings=settings)
 
     return app
 
