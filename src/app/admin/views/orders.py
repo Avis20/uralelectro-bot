@@ -18,7 +18,7 @@ class OrderAdminView(ModelView, model=Order):
 
     column_labels = {
         Order.customer: "Заказчик",
-        Order.product: "Номенклатура",
+        Order.product: "Товар",
         Order.employee: "Сотрудник",
         Order.order_status: "Статус заказа",
         Order.order_date: "Дата заказа",

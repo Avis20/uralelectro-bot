@@ -1,7 +1,5 @@
-# Номенклатура
-
 import uuid
-from sqlalchemy import String, Numeric
+from sqlalchemy import Integer, String, Numeric
 from sqlalchemy.orm import Mapped, relationship
 
 from app.models.base import Column, BaseModel, RestrictForeignKey
@@ -13,7 +11,7 @@ from app.models.inventory.warehouses import Warehouse
 
 class Product(BaseModel, BaseUUIDMixin):
 
-    __tablename__ = "Product"
+    __tablename__ = "product"
     __table_args__ = {"schema": "inventory"}
 
     def __str__(self) -> str:
@@ -47,6 +45,13 @@ class Product(BaseModel, BaseUUIDMixin):
         comment="Наименование товара",
     )
 
+    description: Mapped[str] = Column(
+        String,
+        nullable=True,
+        init=False,
+        comment="Описание товара",
+    )
+
     image_url: Mapped[str] = Column(
         String,
         nullable=True,
@@ -59,6 +64,13 @@ class Product(BaseModel, BaseUUIDMixin):
         nullable=False,
         init=False,
         comment="Единица измерения товара",
+    )
+
+    quantity: Mapped[str] = Column(
+        Integer,
+        nullable=False,
+        init=False,
+        comment="Количество товара",
     )
 
     article_number: Mapped[str] = Column(

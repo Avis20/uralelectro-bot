@@ -1,6 +1,6 @@
 from datetime import date
 import uuid
-from sqlalchemy import Date
+from sqlalchemy import Date, String
 from sqlalchemy.orm import Mapped, relationship
 
 from app.models.base import Column, BaseModel, RestrictForeignKey
@@ -45,6 +45,19 @@ class Order(BaseModel, BaseUUIDMixin):
         nullable=False,
         init=False,
         comment="Статус заказа",
+    )
+
+    address: Mapped[str] = Column(
+        String(length=255),
+        nullable=False,
+        init=False,
+        comment="Адрес доставки",
+    )
+
+    quantity: Mapped[int] = Column(
+        nullable=False,
+        init=False,
+        comment="Количество",
     )
 
     order_date: Mapped[date] = Column(
