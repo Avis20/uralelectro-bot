@@ -7,7 +7,6 @@ from sqlalchemy.orm import Mapped, relationship
 
 from app.models.base import Column, BaseModel, RestrictForeignKey
 from app.models.inventory.warehouses import Warehouse
-# from app.models.inventory.product import Product
 from app.models.mixins import BaseUUIDMixin
 from app.models.supplier.suppliers import Supplier
 

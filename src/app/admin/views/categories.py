@@ -17,10 +17,19 @@ class CategoryAdminView(ModelView, model=Category):
     name_plural = "Категории товаров"
 
     column_labels = {
-        Category.products: "Товары",
-        Category.name: "Наименование категории",
-        Category.description: "Описание категории",
+        "products": "Товары",
+        "name": "Наименование категории",
+        "description": "Описание категории",
+        "ts_create": "Дата и время создания",
+        "ts_modify": "Дата и время обновления",
+        "is_deleted": "Флаг, что запись удалена",
     }
+
+    column_sortable_list = [
+        Category.name,
+        Category.description,
+        Category.ts_create,
+    ]
 
     column_list = [
         # Category.id,

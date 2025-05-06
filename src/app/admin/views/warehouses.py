@@ -17,10 +17,13 @@ class WarehouseAdminView(ModelView, model=Warehouse):
     name_plural = "Склады"
 
     column_labels = {
-        Warehouse.arrivals: "Поступления",
-        Warehouse.products: "Товары",
-        Warehouse.name: "Название склада",
-        Warehouse.address: "Адрес склада",
+        "arrivals": "Поступления",
+        "products": "Товары",
+        "name": "Название склада",
+        "address": "Адрес склада",
+        "ts_create": "Дата и время создания",
+        "ts_modify": "Дата и время обновления",
+        "is_deleted": "Флаг, что запись удалена",
     }
 
     column_list = [
@@ -29,6 +32,12 @@ class WarehouseAdminView(ModelView, model=Warehouse):
         Warehouse.address,
         Warehouse.ts_create,
         Warehouse.ts_modify,
+    ]
+
+    column_sortable_list = [
+        Warehouse.ts_create,
+        Warehouse.name,
+        Warehouse.address,
     ]
 
     async def on_model_change(self, data: dict, model: Any, is_created: bool, request: Request):

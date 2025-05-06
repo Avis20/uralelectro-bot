@@ -25,11 +25,17 @@ def setup_admin(app: FastAPI, settings: Settings):
         authentication_backend=authentication_backend,
         debug=settings.DEBUG,
     )
-    admin.add_view(CategoryAdminView)
-    admin.add_view(WarehouseAdminView)
-    admin.add_view(SupplierAdminView)
-    admin.add_view(ArrivalAdminView)
-    admin.add_view(ProductAdminView)
-    admin.add_view(EmployeeAdminView)
-    admin.add_view(CustomerAdminView)
-    admin.add_view(OrderAdminView)
+
+    views = [
+        CategoryAdminView,
+        WarehouseAdminView,
+        SupplierAdminView,
+        ArrivalAdminView,
+        ProductAdminView,
+        EmployeeAdminView,
+        CustomerAdminView,
+        OrderAdminView,
+    ]
+
+    for view in views:
+        admin.add_view(view)

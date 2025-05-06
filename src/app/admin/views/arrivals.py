@@ -18,14 +18,23 @@ class ArrivalAdminView(ModelView, model=Arrival):
     name_plural = "Поступления"
 
     column_labels = {
-        Arrival.supplier: "Поставщик",
-        Arrival.warehouse: "Склад",
-        Arrival.products: "Товары",
-        Arrival.arrival_date: "Дата поступления",
+        "supplier": "Поставщик",
+        "warehouse": "Склад",
+        "products": "Товары",
+        "arrival_date": "Дата поступления",
+        "ts_create": "Дата и время создания",
+        "ts_modify": "Дата и время обновления",
+        "is_deleted": "Флаг, что запись удалена",
     }
 
+    column_sortable_list = [
+        Arrival.supplier,
+        Arrival.warehouse,
+        Arrival.arrival_date,
+    ]
+
     column_list = [
-        Arrival.id,
+        # Arrival.id,
         Arrival.supplier,
         Arrival.warehouse,
         Arrival.arrival_date,

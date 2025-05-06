@@ -18,11 +18,14 @@ class EmployeeAdminView(ModelView, model=Employee):
     name_plural = "Сотрудники"
 
     column_labels = {
-        Employee.first_name: "Имя сотрудника",
-        Employee.last_name: "Фамилия сотрудника",
-        Employee.position: "Должность сотрудника",
-        Employee.phone_number: "Телефон сотрудника",
-        Employee.email: "Электронная почта сотрудника",
+        "first_name": "Имя сотрудника",
+        "last_name": "Фамилия сотрудника",
+        "position": "Должность сотрудника",
+        "phone_number": "Телефон сотрудника",
+        "email": "Электронная почта сотрудника",
+        "ts_create": "Дата и время создания",
+        "ts_modify": "Дата и время обновления",
+        "is_deleted": "Флаг, что запись удалена",
     }
 
     column_list = [
@@ -34,6 +37,15 @@ class EmployeeAdminView(ModelView, model=Employee):
         Employee.email,
         Employee.ts_create,
         Employee.ts_modify,
+    ]
+
+    column_sortable_list = [
+        Employee.first_name,
+        Employee.last_name,
+        Employee.position,
+        Employee.phone_number,
+        Employee.email,
+        Employee.ts_create,
     ]
 
     column_details_list = [

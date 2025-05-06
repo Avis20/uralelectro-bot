@@ -17,15 +17,18 @@ class CustomerAdminView(ModelView, model=Customer):
     name_plural = "Заказчики"
 
     column_labels = {
-        Customer.contact_person: "Контактное лицо",
-        Customer.address: "Адрес",
-        Customer.city: "Город",
-        Customer.region: "Регион",
-        Customer.postal_code: "Почтовый индекс",
-        Customer.country: "Страна",
-        Customer.phone_number: "Номер телефона",
-        Customer.email: "Электронная почта",
-        Customer.inn: "ИНН",
+        "contact_person": "Контактное лицо",
+        "address": "Адрес",
+        "city": "Город",
+        "region": "Регион",
+        "postal_code": "Почтовый индекс",
+        "country": "Страна",
+        "phone_number": "Номер телефона",
+        "email": "Электронная почта",
+        "inn": "ИНН",
+        "ts_create": "Дата и время создания",
+        "ts_modify": "Дата и время обновления",
+        "is_deleted": "Флаг, что запись удалена",
     }
 
     column_list = [
@@ -41,6 +44,19 @@ class CustomerAdminView(ModelView, model=Customer):
         Customer.inn,
         Customer.ts_create,
         Customer.ts_modify,
+    ]
+
+    column_sortable_list = [
+        Customer.contact_person,
+        Customer.address,
+        Customer.city,
+        Customer.region,
+        Customer.postal_code,
+        Customer.country,
+        Customer.phone_number,
+        Customer.email,
+        Customer.inn,
+        Customer.ts_create,
     ]
 
     column_details_list = [

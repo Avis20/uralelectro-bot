@@ -17,16 +17,31 @@ class SupplierAdminView(ModelView, model=Supplier):
     name_plural = "Поставщики"
 
     column_labels = {
-        Supplier.arrivals: "Поставки",
-        Supplier.company_name: "Наименование компании",
-        Supplier.contact_person: "Контактное лицо",
-        Supplier.address: "Адрес",
-        Supplier.city: "Город",
-        Supplier.region: "Регион",
-        Supplier.postal_code: "Почтовый индекс",
-        Supplier.phone_number: "Телефон",
-        Supplier.email: "Электронная почта",
+        "arrivals": "Поставки",
+        "company_name": "Наименование компании",
+        "contact_person": "Контактное лицо",
+        "address": "Адрес",
+        "city": "Город",
+        "region": "Регион",
+        "postal_code": "Почтовый индекс",
+        "phone_number": "Телефон",
+        "email": "Электронная почта",
+        "ts_create": "Дата и время создания",
+        "ts_modify": "Дата и время обновления",
+        "is_deleted": "Флаг, что запись удалена",
     }
+
+    column_sortable_list = [
+        Supplier.company_name,
+        Supplier.contact_person,
+        Supplier.address,
+        Supplier.city,
+        Supplier.region,
+        Supplier.postal_code,
+        Supplier.phone_number,
+        Supplier.email,
+        Supplier.ts_create,
+    ]
 
     column_list = [
         # Supplier.id,
