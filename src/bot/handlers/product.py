@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery
 
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 
 from loguru import logger
 
@@ -17,6 +18,10 @@ from bot.services.product_service import ProductService
 from bot.services.user_service import UserService
 
 router = Router(name="product")
+
+
+class UserState(StatesGroup):
+    waiting_for_data = State()
 
 
 @router.message(Command(commands=["products", "product"]))
@@ -87,13 +92,6 @@ async def product_number_callback(query: types.CallbackQuery) -> None:
     product_id = query.data.split("_")[1]  # type: ignore
     logger.info(f"Product ID: {product_id}")
     await product_by_id_handler(query.message, product_id)
-
-
-from aiogram.fsm.state import State, StatesGroup
-
-
-class UserState(StatesGroup):
-    waiting_for_data = State()
 
 
 @router.callback_query(ProductCallbackData.filter())

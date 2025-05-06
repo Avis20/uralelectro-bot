@@ -1,18 +1,27 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+# Константы для callback_data
+CALLBACK_CATEGORY = "category"
+CALLBACK_INFO = "info"
+CALLBACK_SUPPORT = "support"
+
 
 def main_keyboard() -> InlineKeyboardMarkup:
-    """Use in main menu."""
+    """
+    Создает клавиатуру для главного меню.
+    
+    Returns:
+        InlineKeyboardMarkup: Объект клавиатуры с кнопками меню
+    """
     buttons = [
-        [InlineKeyboardButton(text="Каталог товаров", callback_data="category")],
+        [InlineKeyboardButton(text="Каталог товаров", callback_data=CALLBACK_CATEGORY)],
         # [InlineKeyboardButton(text="Сделать запрос", callback_data="request")],
-        [InlineKeyboardButton(text="О компании", callback_data="info")],
-        [InlineKeyboardButton(text="Служба поддержки", callback_data="support")],
+        [InlineKeyboardButton(text="О компании", callback_data=CALLBACK_INFO)],
+        [InlineKeyboardButton(text="Служба поддержки", callback_data=CALLBACK_SUPPORT)],
     ]
 
     keyboard = InlineKeyboardBuilder(markup=buttons)
-
-    keyboard.adjust(1, 1, 2)
+    keyboard.adjust(1)  # Размещаем все кнопки в один столбец
 
     return keyboard.as_markup()

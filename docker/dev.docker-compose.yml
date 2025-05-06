@@ -15,8 +15,8 @@ services:
     container_name: uralelectro-bot
     restart: unless-stopped
     env_file: ../.docker.env
-    # command: poetry run python3 ./bot/main.py
-    command: sleep infinity
+    command: poetry run python3 ./bot/main.py
+    # command: sleep infinity
     volumes:
       - ../src/bot:/opt/bot
       - ../src/app:/opt/app
