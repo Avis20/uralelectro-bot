@@ -41,6 +41,10 @@ class OrderRepository:
     async def get_order_dto(self, order_db) -> OrderDTO:
         order = OrderDTO(
             id=order_db.id,
+            order_number=order_db.order_number,
+            quantity=order_db.quantity,
+            address=order_db.address,
+            comment=order_db.comment,
             customer_id=order_db.customer_id,
             product_id=order_db.product_id,
             order_date=order_db.order_date,

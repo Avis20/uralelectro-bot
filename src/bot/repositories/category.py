@@ -23,7 +23,7 @@ class CategoryReader:
         return None
 
     async def get_categories(self) -> list[CategoryDTO]:
-        stmt = select(Category)
+        stmt = select(Category).order_by(Category.name)
         async with self.sessionmaker() as session:
             result = await session.execute(stmt)
             if categories := result.scalars():

@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 from uuid import UUID
 from aiogram import F, Router, types
@@ -10,10 +11,12 @@ from aiogram.fsm.state import State, StatesGroup
 
 from loguru import logger
 
-from bot.callback.product import ProductCallbackData
+from bot.callback.product import DeliveryCallbackData, ProductCallbackData
 from bot.dto.order import OrderCreateDTO
-from bot.keyboards.inline.product import product_by_keyboard, product_keyboard
+from bot.keyboards.inline.product import product_by_keyboard, product_keyboard, product_question_keyboard
+from bot.services.delivery_service import DeliveryService
 from bot.services.order_service import OrderService
+from bot.services.payment_service import PaymentService
 from bot.services.product_service import ProductService
 from bot.services.user_service import UserService
 
@@ -21,7 +24,11 @@ router = Router(name="product")
 
 
 class UserState(StatesGroup):
-    waiting_for_data = State()
+    waiting_for_data_quantity = State()
+    waiting_for_data_address = State()
+    waiting_for_data_delivery_date = State()
+    waiting_for_data_comment = State()
+    waiting_for_data_confirm = State()
 
 
 @router.message(Command(commands=["products", "product"]))
@@ -74,8 +81,8 @@ async def product_by_id_handler(message: types.Message, product_id: str) -> None
     procudt_text = (
         f"Название: {product.name}\n"
         f"Описание: {product.description}\n"
-        f"Количество: {product.quantity}\n"
-        f"Цена: {product.price} руб."
+        f"Количество: {product.quantity} {product.unit_of_measure}\n"
+        f"Цена за штуку: {product.price} руб."
     )
     if product.category:
         procudt_text += f"\nКатегория: {product.category.name}\n"
@@ -96,22 +103,32 @@ async def product_number_callback(query: types.CallbackQuery) -> None:
 
 @router.callback_query(ProductCallbackData.filter())
 async def product_callback_order(query: CallbackQuery, callback_data: ProductCallbackData, state: FSMContext) -> None:
-    message_test = "Укажите количество товара, адрес доставки и дату доставки в формате\n" "кол-во:адрес:ДД.ММ.ГГГГ"
+    message_test = "Укажите количество товара"
     await query.message.answer(text=message_test)
 
     user_data = await state.get_data()
     user_data["product_id"] = str(callback_data.product_id)
     await state.set_data(user_data)
-    await state.set_state(UserState.waiting_for_data)
+    await state.set_state(UserState.waiting_for_data_quantity)
 
 
-@router.message(UserState.waiting_for_data)
-async def process_data(message: types.Message, state: FSMContext):
+@router.message(UserState.waiting_for_data_quantity)
+async def process_quantity_data(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
+    user_dto = await UserService.get_user_by_telegram_id(user_id)
+    if not user_dto:
+        await message.answer("Ошибка: пользователь не найден.")
+        return
+
     user_data_message = message.text
-    user_data_message = message.text.split(":")
-    if len(user_data_message) != 3:
-        await message.answer("Неверный формат данных. Пожалуйста, введите данные в формате\nкол-во:адрес:ДД.ММ.ГГГГ")
+
+    if not user_data_message or not user_data_message.isdigit():
+        await message.answer("Ошибка: неверный формат данных.")
+        return
+
+    quantity = int(user_data_message or 0)
+    if quantity <= 0:
+        await message.answer("Ошибка: количество товара должно быть больше 0.")
         return
 
     user_data = await state.get_data()
@@ -125,39 +142,166 @@ async def process_data(message: types.Message, state: FSMContext):
         await message.answer("Ошибка: продукт не найден.")
         return
 
+    if product_dto.quantity and quantity > product_dto.quantity:
+        await message.answer("Ошибка: недостаточно товара на складе. На складе осталось: " + str(product_dto.quantity))
+        return
+
+    user_data["quantity"] = quantity
+    await state.set_data(user_data)
+    await state.set_state(UserState.waiting_for_data_address)
+
+    message_test = "Укажите адрес доставки"
+    await message.answer(text=message_test)
+
+
+@router.message(UserState.waiting_for_data_address)
+async def process_address_data(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
     user_dto = await UserService.get_user_by_telegram_id(user_id)
     if not user_dto:
         await message.answer("Ошибка: пользователь не найден.")
         return
 
-    quantity = int(user_data_message[0])
-    address = user_data_message[1]
-    delivery_date = user_data_message[2]
+    user_data_message = message.text
+    address = user_data_message
+    if not address:
+        await message.answer("Ошибка: неверный формат данных.")
+        return
+    user_data = await state.get_data()
+    user_data["address"] = user_data_message
+    await state.set_data(user_data)
+
+    await message.answer(text="Рассчитываю стоимость...")
+    await asyncio.sleep(2)
+
+    user_data = await state.get_data()
+    product_id = user_data.get("product_id")
+    quantity = user_data.get("quantity", 0)
+    if not product_id:
+        await message.answer("Ошибка: не удалось получить идентификатор продукта.")
+        return
+
+    product_dto = await ProductService.get_product_by_id(UUID(product_id))
+    if not product_dto:
+        await message.answer("Ошибка: продукт не найден.")
+        return
+
+    total_order_price = await DeliveryService.calculate_delivery_cost(
+        price=product_dto.price, quantity=quantity, address=address
+    )
+    if not total_order_price:
+        await message.answer("Ошибка: не удалось рассчитать стоимость доставки.")
+        return
+
+    user_data["total_price"] = total_order_price.total_price
+    await state.set_data(user_data)
+
+    price_answer = (
+        f"Итоговая стоимость заказа:"
+        f"\nТовар: {product_dto.name} x {quantity} шт. = {total_order_price.product_price:,.0f} руб."
+        f"\nДоставка: {total_order_price.delivery_price:,.0f} руб."
+        f"\nНДС (20%): {total_order_price.vat_price:,.0f} руб."
+        f"\n<b>Общая сумма: {total_order_price.total_price:,.0f} руб.</b>"
+    )
+    await message.answer(text=price_answer)
+    await message.answer(text="Продолжить оформление заказа?", reply_markup=product_question_keyboard())
+
+
+@router.callback_query(DeliveryCallbackData.filter())
+async def product_delivery_yes(query: CallbackQuery, callback_data: DeliveryCallbackData, state: FSMContext) -> None:
+    message_test = "Укажите дату доставки в формате ДД.ММ.ГГГГ"
+    await query.message.answer(text=message_test)
+    await state.set_state(UserState.waiting_for_data_delivery_date)
+
+
+@router.message(UserState.waiting_for_data_delivery_date)
+async def process_delivery_date_data(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    user_dto = await UserService.get_user_by_telegram_id(user_id)
+    if not user_dto:
+        await message.answer("Ошибка: пользователь не найден.")
+        return
+
+    error_message = "Ошибка: неверный формат даты доставки. Укажите дату доставки в формате ДД.ММ.ГГГГ"
+    user_data_message = message.text
+    delivery_date = user_data_message
+    if not delivery_date:
+        await message.answer(error_message)
+        return
+
     try:
         delivery_date = datetime.strptime(delivery_date, "%d.%m.%Y").date()
     except ValueError:
-        await message.answer("Ошибка: неверный формат даты доставки.")
+        await message.answer(error_message)
         return
 
     if delivery_date < datetime.now().date():
         await message.answer("Ошибка: дата доставки должна быть больше текущей даты.")
         return
 
-    if quantity <= 0:
-        await message.answer("Ошибка: количество товара должно быть больше 0.")
+    user_data = await state.get_data()
+    user_data["delivery_date"] = delivery_date.strftime("%d.%m.%Y")
+    await state.set_data(user_data)
+    await state.set_state(UserState.waiting_for_data_comment)
+    message_test = "Укажите комментарий к заказу"
+    await message.answer(text=message_test)
+
+
+@router.message(UserState.waiting_for_data_comment)
+async def process_comment_date_data(message: types.Message, state: FSMContext):
+    user_data = await state.get_data()
+    user_data_message = message.text
+    comment = user_data_message
+    if not comment:
+        await message.answer("Ошибка: неверный формат данных.")
+        return
+    user_data["comment"] = user_data_message
+    await state.set_data(user_data)
+
+    user_dto = await UserService.get_user_by_telegram_id(message.from_user.id)
+    if not user_dto:
+        await message.answer("Ошибка: пользователь не найден.")
         return
 
-    if product_dto.quantity and quantity > product_dto.quantity:
-        await message.answer("Ошибка: недостаточно товара на складе.")
+    product_id = user_data.get("product_id")
+    if not product_id:
+        await message.answer("Ошибка: не удалось получить идентификатор продукта.")
         return
 
+    product_dto = await ProductService.get_product_by_id(UUID(product_id))
+    if not product_dto:
+        await message.answer("Ошибка: продукт не найден.")
+        return
+
+    delivery_date = datetime.strptime(user_data["delivery_date"], "%d.%m.%Y").date()
+
+    order_number = await OrderService.generate_order_number()
     order_create_dto = OrderCreateDTO(
+        order_number=order_number,
         customer_id=user_dto.id,
         product_id=product_dto.id,
-        quantity=quantity,
-        address=address,
+        quantity=user_data["quantity"],
+        address=user_data["address"],
         order_date=delivery_date,
+        comment=user_data["comment"],
     )
-    order_create_dto = await OrderService.create_order(order_create_dto)
+    await OrderService.create_order(order_create_dto)
 
-    await message.answer("Спасибо за ваш заказ!")
+    payment_link = await PaymentService.create_payment_link(
+        user_id=user_dto.id,
+        product_id=user_data["product_id"],
+        quantity=user_data["quantity"],
+        total_price=user_data["total_price"],
+    )
+
+    confirm_message = (
+        "🛒 <b>Проверьте данные вашего заказа:</b>\n\n"
+        f"📄 <b>Номер заказа:</b> {str(order_number)}\n"
+        f"📦 <b>Товар:</b> {product_dto.name} × {user_data['quantity']} {product_dto.unit_of_measure}\n"
+        f"📍 <b>Адрес доставки:</b> {user_data['address']}\n"
+        f"📅 <b>Дата доставки:</b> {user_data['delivery_date']}\n"
+        f"💬 <b>Комментарий:</b> {user_data['comment'] or 'Нет'}\n\n"
+        f"💰 <b>Общая сумма:</b> {user_data['total_price']:,.2f} руб.\n\n"
+        f"💳 <b>Ссылка на оплату:</b> <a href='{payment_link}'>Перейти к оплате</a>"
+    )
+    await message.answer(text=confirm_message, parse_mode="HTML")

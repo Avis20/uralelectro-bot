@@ -20,8 +20,12 @@ class OrderAdminView(ModelView, model=Order):
         "customer": "Заказчик",
         "product": "Товар",
         "employee": "Сотрудник",
+        "order_number": "Номер заказа",
         "order_status": "Статус заказа",
         "order_date": "Дата заказа",
+        "address": "Адрес доставки",
+        "comment": "Комментарий к заказу",
+        "quantity": "Количество товара",
         "actual_delivery_date": "Фактическая дата отгрузки",
         "ts_create": "Дата и время создания",
         "ts_modify": "Дата и время обновления",
@@ -29,17 +33,21 @@ class OrderAdminView(ModelView, model=Order):
     }
 
     column_list = [
-        Order.id,
-        Order.order_status,
+        # Order.id,
+        Order.order_number,
         Order.customer,
+        Order.order_status,
         Order.product,
+        Order.quantity,
         Order.employee,
+        Order.address,
         Order.order_date,
         Order.actual_delivery_date,
     ]
 
     column_sortable_list = [
-        Order.id,
+        # Order.id,
+        Order.order_number,
         Order.order_status,
         Order.customer,
         Order.product,
@@ -50,10 +58,13 @@ class OrderAdminView(ModelView, model=Order):
 
     column_details_list = [
         Order.id,
+        Order.order_number,
         Order.customer,
+        Order.order_status,
         Order.product,
         Order.employee,
-        Order.order_status,
+        Order.address,
+        Order.comment,
         Order.order_date,
         Order.actual_delivery_date,
         Order.ts_create,

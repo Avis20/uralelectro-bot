@@ -5,12 +5,13 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 CALLBACK_CATEGORY = "category"
 CALLBACK_INFO = "info"
 CALLBACK_SUPPORT = "support"
+CALLBACK_FAQ = "faq"
 
 
 def main_keyboard() -> InlineKeyboardMarkup:
     """
     Создает клавиатуру для главного меню.
-    
+
     Returns:
         InlineKeyboardMarkup: Объект клавиатуры с кнопками меню
     """
@@ -19,6 +20,7 @@ def main_keyboard() -> InlineKeyboardMarkup:
         # [InlineKeyboardButton(text="Сделать запрос", callback_data="request")],
         [InlineKeyboardButton(text="О компании", callback_data=CALLBACK_INFO)],
         [InlineKeyboardButton(text="Служба поддержки", callback_data=CALLBACK_SUPPORT)],
+        [InlineKeyboardButton(text="FAQ", callback_data=CALLBACK_FAQ)],
     ]
 
     keyboard = InlineKeyboardBuilder(markup=buttons)

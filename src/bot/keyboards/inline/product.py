@@ -1,11 +1,22 @@
 from uuid import UUID
-from aiogram.types import InlineKeyboardMarkup, CallbackQuery
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogram import F
 
-from bot.callback.product import ProductCallbackData
+from bot.callback.product import DeliveryCallbackData, ProductCallbackData
 from bot.dto.product import ProductDTO
+
+
+def product_question_keyboard() -> InlineKeyboardMarkup:
+    buttons = [
+        [InlineKeyboardButton(text="Да", callback_data=DeliveryCallbackData().pack())],
+        [InlineKeyboardButton(text="Нет", callback_data="menu")],
+    ]
+
+    keyboard = InlineKeyboardBuilder(markup=buttons)
+
+    return keyboard.as_markup()
 
 
 def product_keyboard(

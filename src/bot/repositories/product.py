@@ -21,7 +21,7 @@ class ProductReader:
         return None
 
     async def get_products(self, category_id: UUID | None = None) -> list[ProductDTO]:
-        stmt = select(Product)
+        stmt = select(Product).order_by(Product.name)
         if category_id:
             stmt = stmt.options(joinedload(Product.category))
             stmt = stmt.filter_by(category_id=category_id)

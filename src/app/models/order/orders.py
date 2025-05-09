@@ -19,6 +19,13 @@ class Order(BaseModel, BaseUUIDMixin):
     def __str__(self) -> str:
         return f"Заказ №{self.id}"
 
+    order_number: Mapped[str] = Column(
+        String(127),
+        nullable=False,
+        init=False,
+        comment="Номер заказа",
+    )
+
     customer_id: Mapped[uuid.UUID] = Column(
         RestrictForeignKey(Customer.id, name="customers_customer_id_fkey"),
         nullable=False,
@@ -52,6 +59,13 @@ class Order(BaseModel, BaseUUIDMixin):
         nullable=False,
         init=False,
         comment="Адрес доставки",
+    )
+
+    comment: Mapped[str] = Column(
+        String(length=255),
+        nullable=True,
+        init=False,
+        comment="Комментарий к заказу",
     )
 
     quantity: Mapped[int] = Column(

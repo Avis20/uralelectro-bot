@@ -10,6 +10,7 @@ users_commands = {
     "menu": "main menu",
     "info": "information about company",
     "support": "support",
+    "faq": "FAQ",
     # "help": "help",
 }
 
