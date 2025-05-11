@@ -23,7 +23,7 @@ from bot.services.user_service import UserService
 
 router = Router(name="product")
 
-WAITING_TIME_MINUTES = 10
+WAITING_TIME_MINUTES = 12
 
 
 class UserState(StatesGroup):
