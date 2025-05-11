@@ -326,4 +326,6 @@ async def process_comment_date_data(message: types.Message, state: FSMContext):
         if check_order and check_order.order_status.name == "В обработке":
             await message.answer("✅ Ваш заказ успешно принят в обработку.")
             break
-    await message.answer("❌ Время на оплату истекло. Пожалуйста, повторите заказ.")
+    if datetime.now() > end_time:
+        await message.answer("❌ Время на оплату истекло. Пожалуйста, повторите заказ.")
+        await state.clear()
