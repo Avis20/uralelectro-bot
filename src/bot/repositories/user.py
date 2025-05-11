@@ -1,10 +1,10 @@
 from uuid import UUID
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, update
 from sqlalchemy.orm import joinedload
 
 from app.models.customer.customers import Customer
 from bot.database.pg_database import SQLAlchemyDatabaseConnector
-from bot.dto.user import UserCreateDTO, UserDTO
+from bot.dto.user import UserCreateDTO, UserDTO, UserUpdateDTO
 
 
 class UserRepository:
@@ -33,6 +33,19 @@ class UserRepository:
     async def create_user(self, user_create_dto: UserCreateDTO) -> UserDTO | None:
         stmt = insert(Customer)
         stmt = stmt.values(user_create_dto.as_dict()).returning(Customer)
+        async with self.sessionmaker() as session:
+            result = await session.execute(stmt)
+            if user_db := result.scalar():
+                user = await self.get_user_dto(user_db)
+            await session.commit()
+            return user
+
+    async def update_user(self, user_update_dto: UserUpdateDTO) -> UserDTO | None:
+        data = {
+            "phone_number": user_update_dto.phone_number,
+        }
+        stmt = update(Customer).filter_by(id=user_update_dto.user_id)
+        stmt = stmt.values(data).returning(Customer)
         async with self.sessionmaker() as session:
             result = await session.execute(stmt)
             if user_db := result.scalar():

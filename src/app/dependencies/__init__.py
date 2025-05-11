@@ -1,3 +1,5 @@
 from .client_dependencies.db_session import MasterSessionMakerDep, SlaveSessionMakerDep
 from .uow_dependencies.user_uow_factory import UserUoWDep
+from .uow_dependencies.order_uow_factory import OrderUoWDep
 from .service_dependencies.user_service_factory import UserServiceDep
+from .service_dependencies.order_service_factory import OrderServiceDep

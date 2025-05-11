@@ -12,6 +12,9 @@ router = Router(name="start")
 async def start_handler(message: types.Message) -> None:
     """Welcome message."""
     user_id = message.from_user.id
+    print('\n\n')
+    print(user_id)
+    print('\n\n')
     if user_id:
         user_dto = await UserService.get_user_by_telegram_id(user_id)
         if not user_dto:

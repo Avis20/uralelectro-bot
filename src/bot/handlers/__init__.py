@@ -8,6 +8,7 @@ from bot.handlers.truble import router as truble_router
 from bot.handlers.product import router as product_router
 from bot.handlers.category import router as category_router
 from bot.handlers.faq import router as faq_router
+from bot.handlers.order import router as order_router
 
 
 def get_handlers_router() -> Router:
@@ -20,4 +21,5 @@ def get_handlers_router() -> Router:
     router.include_router(product_router)
     router.include_router(category_router)
     router.include_router(faq_router)
+    router.include_router(order_router)
     return router

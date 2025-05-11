@@ -6,6 +6,7 @@ CALLBACK_CATEGORY = "category"
 CALLBACK_INFO = "info"
 CALLBACK_SUPPORT = "support"
 CALLBACK_FAQ = "faq"
+CALLBACK_MY_ORDERS = "order"
 
 
 def main_keyboard() -> InlineKeyboardMarkup:
@@ -17,7 +18,7 @@ def main_keyboard() -> InlineKeyboardMarkup:
     """
     buttons = [
         [InlineKeyboardButton(text="Каталог товаров", callback_data=CALLBACK_CATEGORY)],
-        # [InlineKeyboardButton(text="Сделать запрос", callback_data="request")],
+        [InlineKeyboardButton(text="Мои заказы", callback_data=CALLBACK_MY_ORDERS)],
         [InlineKeyboardButton(text="О компании", callback_data=CALLBACK_INFO)],
         [InlineKeyboardButton(text="Служба поддержки", callback_data=CALLBACK_SUPPORT)],
         [InlineKeyboardButton(text="FAQ", callback_data=CALLBACK_FAQ)],

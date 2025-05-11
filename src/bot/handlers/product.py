@@ -1,4 +1,5 @@
 import asyncio
+
 from datetime import datetime
 from uuid import UUID
 from aiogram import F, Router, types
@@ -21,6 +22,8 @@ from bot.services.product_service import ProductService
 from bot.services.user_service import UserService
 
 router = Router(name="product")
+
+WAITING_TIME_MINUTES = 10
 
 
 class UserState(StatesGroup):
@@ -275,24 +278,31 @@ async def process_comment_date_data(message: types.Message, state: FSMContext):
 
     delivery_date = datetime.strptime(user_data["delivery_date"], "%d.%m.%Y").date()
 
-    order_number = await OrderService.generate_order_number()
-    order_create_dto = OrderCreateDTO(
-        order_number=order_number,
-        customer_id=user_dto.id,
-        product_id=product_dto.id,
-        quantity=user_data["quantity"],
-        address=user_data["address"],
-        order_date=delivery_date,
-        comment=user_data["comment"],
-    )
-    await OrderService.create_order(order_create_dto)
-
-    payment_link = await PaymentService.create_payment_link(
+    payment_link, payment_id = await PaymentService.create_payment_link(
         user_id=user_dto.id,
         product_id=user_data["product_id"],
         quantity=user_data["quantity"],
         total_price=user_data["total_price"],
     )
+    if not payment_link:
+        await message.answer("Ошибка: не удалось создать счет на оплату.")
+        return
+
+    order_number = await OrderService.generate_order_number()
+    order_create_dto = OrderCreateDTO(
+        order_number=order_number,
+        customer_id=user_dto.id,
+        product_id=product_dto.id,
+        payment_id=payment_id,
+        quantity=user_data["quantity"],
+        address=user_data["address"],
+        order_date=delivery_date,
+        comment=user_data["comment"],
+    )
+    order_dto = await OrderService.create_order(order_create_dto)
+    if not order_dto:
+        await message.answer("Ошибка: не удалось создать заказ.")
+        return
 
     confirm_message = (
         "🛒 <b>Проверьте данные вашего заказа:</b>\n\n"
@@ -305,3 +315,15 @@ async def process_comment_date_data(message: types.Message, state: FSMContext):
         f"💳 <b>Ссылка на оплату:</b> <a href='{payment_link}'>Перейти к оплате</a>"
     )
     await message.answer(text=confirm_message, parse_mode="HTML")
+
+    current_time = datetime.now()
+    end_time = datetime.now().replace(minute=current_time.minute + WAITING_TIME_MINUTES)
+    while datetime.now() < end_time:
+        logger.info(f"Current time: {datetime.now()}")
+        await asyncio.sleep(5)
+        check_order = await OrderService.get_order_by_id(order_id=order_dto.id)
+        logger.info(f"Check order: {check_order}")
+        if check_order and check_order.order_status.name == "В обработке":
+            await message.answer("✅ Ваш заказ успешно принят в обработку.")
+            return
+    await message.answer("❌ Время на оплату истекло. Пожалуйста, повторите заказ.")

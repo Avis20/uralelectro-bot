@@ -17,6 +17,7 @@ class CustomerAdminView(ModelView, model=Customer):
     name_plural = "Заказчики"
 
     column_labels = {
+        "telegram_user_id": "Telegram ID",
         "contact_person": "Контактное лицо",
         "address": "Адрес",
         "city": "Город",
@@ -34,6 +35,7 @@ class CustomerAdminView(ModelView, model=Customer):
     column_list = [
         # Customer.id,
         Customer.contact_person,
+        Customer.telegram_user_id,
         Customer.address,
         Customer.city,
         Customer.region,
@@ -48,6 +50,7 @@ class CustomerAdminView(ModelView, model=Customer):
 
     column_sortable_list = [
         Customer.contact_person,
+        Customer.telegram_user_id,
         Customer.address,
         Customer.city,
         Customer.region,
@@ -61,6 +64,7 @@ class CustomerAdminView(ModelView, model=Customer):
 
     column_details_list = [
         Customer.id,
+        Customer.telegram_user_id,
         Customer.contact_person,
         Customer.address,
         Customer.city,

@@ -11,6 +11,12 @@ class UserCreateDTO(DTO):
 
 
 @dataclass
+class UserUpdateDTO(DTO):
+    user_id: UUID
+    phone_number: str | None = None
+
+
+@dataclass
 class UserDTO(DTO):
     id: UUID
     telegram_user_id: int

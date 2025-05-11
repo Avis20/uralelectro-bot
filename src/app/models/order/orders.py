@@ -54,6 +54,20 @@ class Order(BaseModel, BaseUUIDMixin):
         comment="Статус заказа",
     )
 
+    payment_id: Mapped[str] = Column(
+        String(length=255),
+        nullable=True,
+        init=False,
+        comment="Идентификатор платежа",
+    )
+
+    payment_status: Mapped[str] = Column(
+        String(length=255),
+        nullable=True,
+        init=False,
+        comment="Статус платежа",
+    )
+
     address: Mapped[str] = Column(
         String(length=255),
         nullable=False,

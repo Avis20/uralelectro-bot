@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.dto.base import DTO
+from bot.dto.product import ProductDTO
 
 
 @dataclass
@@ -22,9 +23,16 @@ class OrderCreateDTO(DTO):
     quantity: int = 1
     address: str = ""
     comment: str = ""
+    payment_id: UUID | None = None
     order_status_id: UUID | None = None
     employee_id: UUID | None = None
     actual_delivery_date: date | None = None
+
+
+@dataclass
+class OrderStatusDTO(DTO):
+    id: UUID
+    name: str
 
 
 @dataclass
@@ -37,6 +45,9 @@ class OrderDTO(DTO):
     quantity: int
     address: str
     comment: str
-    order_status_id: str = "1"
+    product: ProductDTO
+    order_status: OrderStatusDTO
+
+    order_status_id: UUID | None = None
     employee_id: UUID | None = None
     actual_delivery_date: date | None = None

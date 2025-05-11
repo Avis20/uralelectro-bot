@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class BotConfig(BaseSettings):
     model_config = SettingsConfigDict(env_prefix="bot_")
     token: str = ""
+    name: str = ""
 
 
 class CacheSettings(BaseSettings):
@@ -37,6 +38,17 @@ class SupportSettings(BaseSettings):
     SUPPORT_URL: str = "https://t.me/support"
 
 
+class YookassaSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="yookassa_")
+    SHOP_ID: str = ""
+    SECRET_KEY: str = ""
+
+
+class AppSettings(BaseSettings):
+    model_config = SettingsConfigDict(env_prefix="app_")
+    BASE_URL: str = ""
+
+
 class Settings(BaseSettings):
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
@@ -46,6 +58,8 @@ class Settings(BaseSettings):
     bot: BotConfig = BotConfig()
     cache: CacheSettings = CacheSettings()
     support: SupportSettings = SupportSettings()
+    yookassa: YookassaSettings = YookassaSettings()
+    app_settings: AppSettings = AppSettings()
 
 
 settings = Settings()
