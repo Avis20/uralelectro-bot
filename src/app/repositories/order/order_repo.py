@@ -24,7 +24,10 @@ class OrderRepository(IOrderRepository, OrderReader, SQLAlchemyRepository):
         stmt = (
             update(Order)
             .filter_by(payment_id=order_update_dto.payment_id)
-            .values(payment_status=order_update_dto.status)
+            .values(
+                payment_status=order_update_dto.status,
+                order_status_id=order_update_dto.order_status_id
+            )
             .returning(Order)
         )
         result = await self._session.execute(stmt)
