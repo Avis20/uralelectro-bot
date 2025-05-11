@@ -1,6 +1,6 @@
 import asyncio
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from uuid import UUID
 from aiogram import F, Router, types
 
@@ -23,7 +23,7 @@ from bot.services.user_service import UserService
 
 router = Router(name="product")
 
-WAITING_TIME_MINUTES = 12
+WAITING_TIME_MINUTES = 10
 
 
 class UserState(StatesGroup):
@@ -317,7 +317,7 @@ async def process_comment_date_data(message: types.Message, state: FSMContext):
     await message.answer(text=confirm_message, parse_mode="HTML")
 
     current_time = datetime.now()
-    end_time = datetime.now().replace(minute=current_time.minute + WAITING_TIME_MINUTES)
+    end_time = current_time + timedelta(minutes=WAITING_TIME_MINUTES)
     while datetime.now() < end_time:
         logger.info(f"Current time: {datetime.now()}")
         await asyncio.sleep(5)
