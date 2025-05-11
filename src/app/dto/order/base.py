@@ -16,6 +16,7 @@ class OrderUpdateDTO(DTO):
     payment_id: str
     status: str
     success: bool | None = False
+    order_status_id: UUID | None = None
 
 
 @dataclass
