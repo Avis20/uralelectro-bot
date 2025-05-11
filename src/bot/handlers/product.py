@@ -318,6 +318,10 @@ async def process_comment_date_data(message: types.Message, state: FSMContext):
 
     current_time = datetime.now()
     end_time = current_time + timedelta(minutes=WAITING_TIME_MINUTES)
+    await message.answer(
+        f"⏳ Ожидание оплаты. Пожалуйста, оплатите заказ в течение {WAITING_TIME_MINUTES} минут.\n"
+        f"Ожидание завершится в {end_time.strftime('%H:%M')}"
+    )
     while datetime.now() < end_time:
         logger.info(f"Current time: {datetime.now()}")
         await asyncio.sleep(5)
@@ -325,7 +329,7 @@ async def process_comment_date_data(message: types.Message, state: FSMContext):
         logger.info(f"Check order: {check_order}")
         if check_order and check_order.order_status.name == "В обработке":
             await message.answer("✅ Ваш заказ успешно принят в обработку.")
-            break
+            return
     if datetime.now() > end_time:
         await message.answer("❌ Время на оплату истекло. Пожалуйста, повторите заказ.")
         await state.clear()
