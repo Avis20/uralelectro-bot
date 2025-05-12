@@ -26,6 +26,7 @@ asgi-correlation-id = "^4.3.4"
 sqladmin = "^0.20.1"
 itsdangerous = "^2.2.0"
 httpx = "^0.28.1"
+faker = "^37.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.8.0"
@@ -39,6 +40,9 @@ flake8-bugbear = "^24.8.19"
 flake8-pytest-style = "^2.0.0"
 flake8-pyproject = "^1.2.3"
 flake8 = "^7.1.1"
+pytest = "^8.3.5"
+pytest-asyncio = "^0.26.0"
+httpx = "^0.28.1"
 
 [tool.black]
 line-length = 120
