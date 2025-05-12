@@ -18,7 +18,7 @@ async def order_handler(message: types.Message, user_id: int) -> None:
     if not orders:
         await message.answer("У вас нет заказов.")
         return
-
+    
     await message.answer("Ваши заказы:")
     for order in orders:
         order_message = (
