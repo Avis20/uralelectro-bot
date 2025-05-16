@@ -11,11 +11,11 @@ from starlette.middleware.cors import CORSMiddleware
 def setup_middlewares(app: FastAPI, request_id_len: int = 8):
     app.add_middleware(
         CORSMiddleware,
-        allow_origin_regex='.*',
+        allow_origins=["https://adminbot.ko4ergin.ru "],  # Разрешаем только этот домен
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
-        expose_headers=['X-Request-ID'],
+        expose_headers=["X-Request-ID"],
     )
     logger.info("Setup %s middleware", CORSMiddleware)
 
