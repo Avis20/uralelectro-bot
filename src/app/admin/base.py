@@ -20,7 +20,7 @@ def setup_admin(app: FastAPI, settings: Settings):
     authentication_backend = AdminAuth(secret_key=settings.admin_config.ADMIN_SECRET)
     admin = Admin(
         app,
-        base_url="/admin",
+        base_url="/",
         session_maker=master_session_maker,
         authentication_backend=authentication_backend,
         debug=settings.DEBUG,
